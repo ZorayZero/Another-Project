@@ -4,25 +4,58 @@ using UnityEngine;
 
 public class obstacleMovement : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 3;
-    [SerializeField] Rigidbody rb;
-    // Start is called before the first frame update
-    void Start()
+    public float speed;
+    Vector3 targetPos;
+
+    public GameObject pathways;
+    public Transform[] wayPoints;
+    int pointIndex;
+    int pointCount;
+    int direction = 1;
+
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.velocity = new Vector3(0,0,0);
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
-
-        if (rb.position.x < -5) 
+        wayPoints = new Transform[pathways.transform.childCount];
+        for (int i = 0; i < pathways.gameObject.transform.childCount; i++)
         {
-            rb.velocity = Vector3.zero;
-         
-        }    
+            wayPoints[i] = pathways.transform.GetChild(i).gameObject.transform;
+        }
     }
+
+    private void Start()
+    {
+        pointCount = wayPoints.Length;
+        pointIndex = 1;
+        targetPos = wayPoints[pointIndex].transform.position;
+    }
+
+    private void Update()
+    {
+        var step = speed * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, step);
+
+        if (transform.position == targetPos)
+        {
+            NextPoint();
+        }
+
+    }
+
+    void NextPoint()
+    {
+        if (pointIndex == pointCount - 1) // arrived at last point
+        {
+            direction = -1;
+        }
+
+        if (pointIndex == 0) // arrived at first point
+        {
+            direction = 1;
+        }
+
+        pointIndex += direction;
+        targetPos = wayPoints[pointIndex].transform.position;
+
+    }
+
 }
