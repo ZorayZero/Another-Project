@@ -10,6 +10,7 @@ public class playerMovement : MonoBehaviour
     [SerializeField] float jumpForce = 300;
     [SerializeField] Rigidbody rb;
     [SerializeField] bool isGrounded = false;
+    [SerializeField]
 
 
     // Start is called before the first frame update
